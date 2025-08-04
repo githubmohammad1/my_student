@@ -1,18 +1,40 @@
-# quran_school/api/serializers.py
 from rest_framework import serializers
-from quran_school.models import Progress
+from ..models import (
+    Student, Test, Attendance,
+    Announcement, Payment, Progress
+)
 
-# quran_school/api/serializers.py
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = '__all__'
+
+
+class TestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Test
+        fields = '__all__'
+
+
+class AttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = '__all__'
+
+
+class AnnouncementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Announcement
+        fields = '__all__'
+
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'
+
 
 class ProgressSerializer(serializers.ModelSerializer):
-    student_name    = serializers.CharField(source='student.name', read_only=True)
-
     class Meta:
-        model  = Progress
-        fields = [
-            'id',
-            'student', 
-            'student_name',
-            'date',
-            'pages_listened',
-        ]
+        model = Progress
+        fields = '__all__'

@@ -10,6 +10,9 @@ class Student(models.Model):
     email = models.EmailField(null=True)
     address = models.TextField(null=True)
 
+    class Meta:
+        app_label = 'quran_school'
+
     def __str__(self):
         return self.name
 
@@ -27,16 +30,20 @@ class Test(models.Model):
     date = models.DateField()
     note = models.TextField(blank=True, null=True)
 
+    class Meta:
+        app_label = 'quran_school'
+
     def __str__(self):
         return f'{self.student.name} - جزء {self.part_number}'
 
 
 class Attendance(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE,related_name='attendances')
-    # related_name='attendances'           adding 
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='attendances')
     date = models.DateField()
     day_name = models.CharField(max_length=20)
-    # memorized_pages = models.PositiveIntegerField()
+
+    class Meta:
+        app_label = 'quran_school'
 
     def __str__(self):
         return f'{self.student.name} - {self.date}'
@@ -47,29 +54,30 @@ class Announcement(models.Model):
     content = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        app_label = 'quran_school'
+
     def __str__(self):
         return self.title
 
 
-# ✅ تعديل الاسم من StudentFund إلى Payment
 class Payment(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='payments')  # ✅ إضافة related_name
-    amount = models.DecimalField(max_digits=8, decimal_places=2)  # ✅ تغيير النوع إلى DecimalField
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='payments')
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
     date = models.DateField()
     is_paid = models.BooleanField(default=True)
 
+    class Meta:
+        app_label = 'quran_school'
+
     def __str__(self):
         return f'{self.student.name} - {self.amount} - {self.date}'
-# quran_school/models.py
 
-from django.db import models
 
 class Progress(models.Model):
-    student          = models.ForeignKey(
-        Student, on_delete=models.CASCADE, related_name='progress_records'
-    )
-    date             = models.DateField()
-    pages_listened   = models.PositiveSmallIntegerField(
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='progress_records')
+    date = models.DateField()
+    pages_listened = models.PositiveSmallIntegerField(
         choices=[(i, str(i)) for i in range(1, 6)],
         default=1,
         help_text="عدد الصفحات المسموعة (1 – 5)"
@@ -77,7 +85,8 @@ class Progress(models.Model):
 
     class Meta:
         unique_together = ('student', 'date')
-        ordering        = ['-date']
+        ordering = ['-date']
+        app_label = 'quran_school'
 
     def __str__(self):
         return f"{self.student.name} – {self.date}: {self.pages_listened} صفحة"
