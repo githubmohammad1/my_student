@@ -1,0 +1,21 @@
+<h2>تقرير الدفعات</h2>
+<table border="1" cellspacing="0" cellpadding="5">
+  <thead>
+    <tr><th>اسم الطالب</th><th>تاريخ</th><th>المبلغ</th></tr>
+  </thead>
+  <tbody>
+    {% for p in payments %}
+      <tr>
+        <td>{{ p.student.name }}</td>
+        <td>{{ p.date|date:"Y-m-d" }}</td>
+        <td>{{ p.amount }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="2"><strong>الإجمالي الكلي</strong></td>
+      <td>{{ overall_total }}</td>
+    </tr>
+  </tfoot>
+</table>

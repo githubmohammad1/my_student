@@ -1,0 +1,6 @@
+<h3>هل تريد حذف الدفعة التي بتاريخ {{ payment.date }} ومبلغها {{ payment.amount }}؟</h3>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">نعم</button>
+  <a href="{% url 'payment_list' %}">لا</a>
+</form>

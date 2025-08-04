@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>صفحة الاختبارات</title>
+    <style>
+        body { font-family: "Arial"; background-color: #f9f9f9; text-align: center; }
+        .test { background-color: #fff; margin: 15px; padding: 10px; border-radius: 8px; box-shadow: 2px 2px 6px #ccc; }
+    </style>
+</head>
+<body>
+    <h1>📘 قائمة الاختبارات</h1>
+    {% for test in tests %}
+        <div class="test">
+            <h3>{{ test.student.name }}</h3>
+            <p>الجزء المختبر: {{ test.part }}</p>
+            <p>الدرجة: {{ test.score }}</p>
+            <small>التاريخ: {{ test.date|date:"Y-m-d" }}</small>
+        </div>
+    {% empty %}
+        <p>لا توجد اختبارات حالياً.</p>
+    {% endfor %}
+</body>
+</html>
