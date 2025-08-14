@@ -8,3 +8,4 @@ urlpatterns = [
     path('api/v1/', include('quran_school.api.urls')),
     path('api-token-auth/', obtain_auth_token),  # ✅ نقطة المصادقة
 ]
+###
