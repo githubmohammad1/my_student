@@ -1,0 +1,4 @@
+ reportlab 
+ django-cors-headers
+ django_extensions 
+ djangorestframework   

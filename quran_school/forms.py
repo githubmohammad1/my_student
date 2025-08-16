@@ -1,12 +1,12 @@
 # quran_school/forms.py
-
 from django import forms
-from .models import Payment
+from .models import MonthlyPayment
 
 class PaymentForm(forms.ModelForm):
     class Meta:
-        model = Payment
-        fields = ['amount', 'date']
+        model = MonthlyPayment
+        fields = ['amount', 'month', 'year']
         widgets = {
-            'date': forms.DateInput(attrs={'type': 'date'}),
+            'month': forms.NumberInput(attrs={'min': 1, 'max': 12}),
+            'year': forms.NumberInput(attrs={'min': 2000, 'max': 2100}),
         }

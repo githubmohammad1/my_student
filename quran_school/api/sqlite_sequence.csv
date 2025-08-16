@@ -1,0 +1,13 @@
+﻿name,seq
+django_migrations,23
+django_admin_log,3
+django_content_type,14
+auth_permission,56
+auth_group,0
+auth_user,1
+quran_school_student,4
+quran_school_test,3
+quran_school_progress,7
+quran_school_payment,3
+quran_school_attendance,9
+quran_school_announcement,1

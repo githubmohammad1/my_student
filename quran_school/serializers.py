@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from ..models import (
+from .models import (
     Student, Test, Attendance,
-    Announcement, Payment, Progress
+    Announcement, MonthlyPayment
 )
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -30,11 +30,11 @@ class AnnouncementSerializer(serializers.ModelSerializer):
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Payment
+        model = MonthlyPayment
         fields = '__all__'
 
 
 class ProgressSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Progress
+        model = Attendance
         fields = '__all__'

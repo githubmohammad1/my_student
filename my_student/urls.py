@@ -5,7 +5,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('quran_school.urls')),
-    path('api/v1/', include('quran_school.api.urls')),
+    # path('api/v1/', include('quran_school.api.urls')),
     path('api-token-auth/', obtain_auth_token),  # ✅ نقطة المصادقة
 ]
 ###

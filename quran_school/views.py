@@ -1,7 +1,10 @@
 # quran_school/views.py
 
+# ======================
+#  Imports مشتركة
+# ======================
 from datetime import date
-from io import BytesIO, StringIO
+from io import BytesIO
 import csv
 
 from django.db.models import Q, Prefetch, Sum
@@ -17,62 +20,117 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 
 from .forms import PaymentForm
-from .models import Announcement, Attendance, Payment, Student, Test
+from .models import (
+    Student, Test, Attendance,
+    Announcement, MonthlyPayment
+)
 
+# ======================
+#  استيرادات API
+# ======================
+from rest_framework import generics
+from .serializers import (
+    StudentSerializer, TestSerializer,
+    AttendanceSerializer, AnnouncementSerializer,
+    PaymentSerializer, ProgressSerializer
+)
+
+# ======================
+#   القسم الأول: API Views
+# ======================
+
+# Student Endpoints
+class StudentListCreateAPI(generics.ListCreateAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
+class StudentDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+
+# Test Endpoints
+class TestListCreateAPI(generics.ListCreateAPIView):
+    queryset = Test.objects.all()
+    serializer_class = TestSerializer
+
+class TestDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Test.objects.all()
+    serializer_class = TestSerializer
+
+# Attendance Endpoints
+class AttendanceListCreateAPI(generics.ListCreateAPIView):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+
+class AttendanceDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Attendance.objects.all()
+    serializer_class = AttendanceSerializer
+
+# Announcement Endpoints
+class AnnouncementListCreateAPI(generics.ListCreateAPIView):
+    queryset = Announcement.objects.all()
+    serializer_class = AnnouncementSerializer
+
+class AnnouncementDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Announcement.objects.all()
+    serializer_class = AnnouncementSerializer
+
+# Payment Endpoints
+class PaymentListCreateAPI(generics.ListCreateAPIView):
+    queryset = MonthlyPayment.objects.all()
+    serializer_class = PaymentSerializer
+
+class PaymentDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = MonthlyPayment.objects.all()
+    serializer_class = PaymentSerializer
+
+# Progress Endpoints
+class ProgressListCreateAPI(generics.ListCreateAPIView):
+    queryset = Attendance.objects.all()
+    serializer_class = ProgressSerializer
+
+class ProgressDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Attendance.objects.all()
+    serializer_class = ProgressSerializer
+
+
+# ======================
+#   القسم الثاني: HTML Views
+# ======================
 
 def home(request):
-    """
-    عرض صفحة الإعلانات الرئيسية
-    """
     announcements = Announcement.objects.all().order_by('-date')
     return render(request, 'quran_school/home.html', {
         'announcements': announcements,
     })
 
-
 def test_list(request):
-    """
-    عرض قائمة الاختبارات مرتبة حسب التاريخ (الأحدث أولًا)
-    """
     tests = Test.objects.all().order_by('-date')
     return render(request, 'quran_school/test_list.html', {
         'tests': tests,
     })
 
-
 def attendance_list(request):
-    """
-    عرض سجل الحضور والغياب مرتّبًا حسب التاريخ (الأحدث أولًا)
-    """
     records = Attendance.objects.all().order_by('-date')
     return render(request, 'quran_school/attendance_list.html', {
         'records': records,
     })
 
-
 def _filter_payments_and_students(request):
-    """
-    دالة داخلية لإعادة QuerySets للدفعات والطلاب مع التصفية والحسابات المشتركة
-    """
-    month_str = request.GET.get('month', '').strip()    # مثال: '2025-08'
+    month_str = request.GET.get('month', '').strip()
     student_q = request.GET.get('student', '').strip()
 
-    # دفعات مرتبة تنازليًا
-    payments_qs = Payment.objects.all().order_by('-date')
+    payments_qs = MonthlyPayment.objects.all().order_by('-date')
 
-    # بناء الفلترة حسب الشهر إن وجد
     date_filter = None
     if month_str:
         try:
             year, month_num = map(int, month_str.split('-'))
-            payments_qs = payments_qs.filter(date__year=year,
-                                             date__month=month_num)
-            date_filter = Q(payments__date__year=year,
-                            payments__date__month=month_num)
+            payments_qs = payments_qs.filter(date__year=year, date__month=month_num)
+            date_filter = Q(payments__date__year=year, payments__date__month=month_num)
         except ValueError:
             date_filter = None
 
-    # الطلاب مع مجاميع دفعاتهم
     if date_filter:
         students = Student.objects.annotate(
             total_paid=Sum('payments__amount', filter=date_filter)
@@ -82,27 +140,19 @@ def _filter_payments_and_students(request):
             total_paid=Sum('payments__amount')
         )
 
-    # ربط الطلاب بدفعاتهم المفلتَرة
     students = students.prefetch_related(
         Prefetch('payments', queryset=payments_qs)
     )
 
-    # فلترة باسم الطالب إن وُجد
     if student_q:
         students = students.filter(name__icontains=student_q)
 
-    # المجموع الكلي لجميع الدفعات بعد التصفية
     overall_total = payments_qs.aggregate(total=Sum('amount'))['total'] or 0
 
     return students, payments_qs, overall_total, month_str, student_q
 
-
 def payment_list(request):
-    """
-    عرض جدول دفعات الطلاب مع فلترة بالشهر واسم الطالب وحساب المجموع الكلي.
-    """
     students, payments_qs, overall, month_str, student_q = _filter_payments_and_students(request)
-
     return render(request, 'quran_school/payment_list.html', {
         'students':       students,
         'payments':       payments_qs,
@@ -111,13 +161,8 @@ def payment_list(request):
         'student_query':  student_q,
     })
 
-
 def payment_create(request, student_id):
-    """
-    صفحة إضافة دفعة جديدة لطالب محدد.
-    """
     student = get_object_or_404(Student, id=student_id)
-
     if request.method == 'POST':
         form = PaymentForm(request.POST)
         if form.is_valid():
@@ -127,18 +172,13 @@ def payment_create(request, student_id):
             return redirect('payment_list')
     else:
         form = PaymentForm(initial={'date': date.today()})
-
     return render(request, 'quran_school/payment_form.html', {
         'form':    form,
         'student': student,
     })
 
-
 def payment_update(request, pk):
-    """
-    صفحة تعديل دفعة موجودة.
-    """
-    payment = get_object_or_404(Payment, pk=pk)
+    payment = get_object_or_404(MonthlyPayment, pk=pk)
     if request.method == 'POST':
         form = PaymentForm(request.POST, instance=payment)
         if form.is_valid():
@@ -146,84 +186,42 @@ def payment_update(request, pk):
             return redirect('payment_list')
     else:
         form = PaymentForm(instance=payment)
-
     return render(request, 'quran_school/payment_form.html', {
         'form':    form,
         'student': payment.student,
     })
 
-
 def payment_delete(request, pk):
-    """
-    حذف دفعة والعودة إلى قائمة الدفعات.
-    """
-    payment = get_object_or_404(Payment, pk=pk)
+    payment = get_object_or_404(MonthlyPayment, pk=pk)
     payment.delete()
     return redirect('payment_list')
 
-
 def export_payments_csv(request):
-    """
-    تصدير قائمة الدفعات إلى ملف CSV.
-    """
     _, payments_qs, _, _, _ = _filter_payments_and_students(request)
-
-    # إعداد الاستجابة كـCSV
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="payments.csv"'
-
     writer = csv.writer(response)
     writer.writerow(['#', 'اسم الطالب', 'التاريخ', 'المبلغ'])
-
     for idx, pay in enumerate(payments_qs, start=1):
-        writer.writerow([
-            idx,
-            pay.student.name,
-            pay.date.strftime("%Y-%m-%d"),
-            f"{pay.amount:.2f}"
-        ])
-
+        writer.writerow([idx, pay.student.name, pay.date.strftime("%Y-%m-%d"), f"{pay.amount:.2f}"])
     return response
 
-
 def export_payments_pdf(request):
-    """
-    تصدير قائمة الدفعات إلى ملف PDF باستخدام ReportLab.
-    """
     _, payments_qs, overall, _, _ = _filter_payments_and_students(request)
-
     buffer = BytesIO()
     doc = SimpleDocTemplate(
-        buffer,
-        pagesize=A4,
-        rightMargin=2*cm,
-        leftMargin=2*cm,
-        topMargin=2*cm,
-        bottomMargin=2*cm
+        buffer, pagesize=A4,
+        rightMargin=2*cm, leftMargin=2*cm,
+        topMargin=2*cm, bottomMargin=2*cm
     )
     styles = getSampleStyleSheet()
     elements = []
-
-    # عنوان التقرير
     elements.append(Paragraph("تقرير المدفوعات", styles['Title']))
     elements.append(Spacer(1, 0.5*cm))
-
-    # بناء بيانات الجدول
     data = [["#", "اسم الطالب", "التاريخ", "المبلغ (ر.س)"]]
     for idx, pay in enumerate(payments_qs, start=1):
-        data.append([
-            idx,
-            pay.student.name,
-            pay.date.strftime("%Y-%m-%d"),
-            f"{pay.amount:.2f}"
-        ])
-    # صف المجموع الكلي
-    data.append([
-        "", "", "المجموع الكلي",
-        f"{overall:.2f}"
-    ])
-
-    # تنسيق الجدول
+        data.append([idx, pay.student.name, pay.date.strftime("%Y-%m-%d"), f"{pay.amount:.2f}"])
+    data.append(["", "", "المجموع الكلي", f"{overall:.2f}"])
     table = Table(data, colWidths=[1.5*cm, 6*cm, 4*cm, 3*cm])
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
@@ -234,30 +232,25 @@ def export_payments_pdf(request):
         ('ALIGN', (0, len(data)-1), (2, len(data)-1), 'RIGHT'),
         ('FONTNAME', (0, len(data)-1), (-1, len(data)-1), 'Helvetica-Bold'),
     ]))
-
     elements.append(table)
-
-    # إنشاء وحفظ الـ PDF
     doc.build(elements)
     pdf = buffer.getvalue()
     buffer.close()
-
-    # إعادة الإرسال كاستجابة PDF
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="payments_report.pdf"'
     return response
-# quran_school/views.py
-
-from .models import Progress
-from django.shortcuts import render
 
 def progress_list(request):
     student_q = request.GET.get('student', '').strip()
-    qs = Progress.objects.select_related('student')
 
+    # جلب سجلات الحضور مع جلب بيانات الطالب المرتبطة لتقليل الاستعلامات
+    qs = Attendance.objects.select_related('student')
+
+    # فلترة حسب اسم الطالب إذا كان موجودًا في البحث
     if student_q:
         qs = qs.filter(student__name__icontains=student_q)
 
+    # عرض النتائج في القالب
     return render(request, 'quran_school/progress_list.html', {
         'records': qs,
         'student_query': student_q,
