@@ -1,4 +1,5 @@
  reportlab 
  django-cors-headers
  django_extensions 
- djangorestframework   
+ djangorestframework 
+ django-filter  

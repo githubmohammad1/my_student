@@ -1,6 +1,37 @@
-<h3>هل تريد حذف الدفعة التي بتاريخ {{ payment.date }} ومبلغها {{ payment.amount }}؟</h3>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit">نعم</button>
-  <a href="{% url 'payment_list' %}">لا</a>
-</form>
+<h2>💰 تأكيد حذف الدفعة</h2>
+
+<div style="
+    background-color: #fff;
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+">
+    <p>هل أنت متأكد أنك تريد حذف الدفعة التالية؟</p>
+    <p><strong>📅 التاريخ:</strong> {{ payment.date|date:"Y-m-d H:i" }}</p>
+    <p><strong>💵 المبلغ:</strong> {{ payment.amount }} {{ payment.currency|default:"ر.س" }}</p>
+
+    <form method="post" style="margin-top: 20px;">
+        {% csrf_token %}
+        <button type="submit" style="
+            background-color: red;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        ">نعم، حذف</button>
+        
+        <a href="{% url 'payment_list' %}" style="
+            background-color: #ccc;
+            color: black;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-right: 10px;
+        ">إلغاء</a>
+    </form>
+</div>

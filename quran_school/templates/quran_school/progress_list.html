@@ -1,17 +1,40 @@
 {# templates/quran_school/progress_list.html #}
-<thead>
-  <tr>
-    <th>الطالب</th>
-    <th>التاريخ</th>
-    <th>عدد الصفحات</th>
-  </tr>
-</thead>
-<tbody>
-  {% for rec in records %}
-  <tr>
-    <td>{{ rec.student.name }}</td>
-    <td>{{ rec.date|date:"Y-m-d" }}</td>
-    <td>{{ rec.pages_listened }}</td>
-  </tr>
-  {% endfor %}
-</tbody>
+
+<h2 style="text-align: center; color: #007acc; margin-top: 20px;">
+    📊 تقرير تقدم الطلاب
+</h2>
+
+<div style="
+    background-color: #fff;
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+">
+
+    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+        <thead>
+            <tr style="background-color: #e6f2ff;">
+                <th style="padding: 10px; border: 1px solid #ccc;">👤 الطالب</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">📅 التاريخ</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">📄 عدد الصفحات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rec in records %}
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ rec.student.name }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ rec.date|date:"Y-m-d" }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ rec.pages_listened }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" style="padding: 10px; color: #999; font-style: italic;">
+                        ⚠️ لا توجد بيانات لعرضها.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

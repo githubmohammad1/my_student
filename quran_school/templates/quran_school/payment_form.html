@@ -1,10 +1,43 @@
 {# quran_school/templates/quran_school/payment_form.html #}
 
-<h2>إضافة دفعة جديدة لـ {{ student.name }}</h2>
+<h2 style="
+    text-align: center;
+    color: #007acc;
+    margin-top: 20px;
+">💰 إضافة دفعة جديدة لـ {{ student.name }}</h2>
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">حفظ الدفعة</button>
-  <a href="{% url 'payment_list' %}">إلغاء</a>
-</form>
+<div style="
+    background-color: #fff;
+    max-width: 450px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    text-align: right;
+">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div style="margin-top: 20px; text-align: center;">
+            <button type="submit" style="
+                background-color: #28a745;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: bold;
+                margin-left: 10px;
+            ">💾 حفظ الدفعة</button>
+
+            <a href="{% url 'payment_list' %}" style="
+                background-color: #ccc;
+                color: black;
+                padding: 10px 20px;
+                border-radius: 6px;
+                text-decoration: none;
+            ">إلغاء</a>
+        </div>
+    </form>
+</div>

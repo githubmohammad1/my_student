@@ -75,7 +75,8 @@ class MonthlyPayment(models.Model):
 class Announcement(models.Model):
     content = models.TextField('الإعلان')
     created_at = models.DateTimeField('تاريخ النشر', auto_now_add=True)
-    date = models.DateField(auto_now_add=True)
+    # date = models.DateField(auto_now_add=True)
+    date = models.DateTimeField(auto_now_add=True)
 
 
     class Meta:

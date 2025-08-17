@@ -1,21 +1,64 @@
-<h2>تقرير الدفعات</h2>
-<table border="1" cellspacing="0" cellpadding="5">
-  <thead>
-    <tr><th>اسم الطالب</th><th>تاريخ</th><th>المبلغ</th></tr>
-  </thead>
-  <tbody>
-    {% for p in payments %}
-      <tr>
-        <td>{{ p.student.name }}</td>
-        <td>{{ p.date|date:"Y-m-d" }}</td>
-        <td>{{ p.amount }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-  <tfoot>
-    <tr>
-      <td colspan="2"><strong>الإجمالي الكلي</strong></td>
-      <td>{{ overall_total }}</td>
-    </tr>
-  </tfoot>
-</table>
+<h2 style="text-align: center; color: #007acc; margin-top: 20px;">
+    💰 تقرير الدفعات
+</h2>
+
+<div style="
+    background-color: #fff;
+    max-width: 750px;
+    margin: 20px auto;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+">
+
+    <!-- أزرار التصدير -->
+    <div style="text-align: left; margin-bottom: 15px;">
+        <a href="{% url 'payments_export_excel' %}" style="
+            background-color: #217346;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-right: 5px;
+        ">📗 تصدير Excel</a>
+
+        <a href="{% url 'payments_export_pdf' %}" style="
+            background-color: #d9534f;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+        ">📄 تصدير PDF</a>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; text-align: center;">
+        <thead>
+            <tr style="background-color: #e6f2ff;">
+                <th style="padding: 10px; border: 1px solid #ccc;">👤 اسم الطالب</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">📅 التاريخ</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">💵 المبلغ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in payments %}
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ p.student.name }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ p.date|date:"Y-m-d" }}</td>
+                    <td style="padding: 8px; border: 1px solid #ccc;">{{ p.amount }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" style="padding: 10px; color: #999; font-style: italic;">
+                        ⚠️ لا توجد دفعات لعرضها.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr style="background-color: #f2f2f2; font-weight: bold;">
+                <td colspan="2" style="padding: 10px; border: 1px solid #ccc;">الإجمالي الكلي</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">{{ overall_total }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>

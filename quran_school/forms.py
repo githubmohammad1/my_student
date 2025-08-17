@@ -7,6 +7,7 @@ class PaymentForm(forms.ModelForm):
         model = MonthlyPayment
         fields = ['amount', 'month', 'year']
         widgets = {
+            
             'month': forms.NumberInput(attrs={'min': 1, 'max': 12}),
             'year': forms.NumberInput(attrs={'min': 2000, 'max': 2100}),
         }
