@@ -176,3 +176,36 @@
 4. **التعامل مع الأخطاء**: تأكد من فحص أكواد الاستجابة (200, 201, 400, 404…) لمعالجة النتائج.
 
 ---
+#!/bin/bash
+
+# التوقف عند أي خطأ
+set -e
+
+# طلب اسم الفرع من المستخدم
+read -p "أدخل وصفًا قصيرًا للتعديل (بالإنجليزية أو بدون مسافات): " desc
+
+# تحويل الوصف إلى اسم فرع مقبول (lowercase مع استبدال المسافات بـ -)
+branch_name=$(echo "$desc" | tr ' ' '-' | tr '[:upper:]' '[:lower:]')
+
+# التأكد من أنك على آخر نسخة من main
+git checkout main
+git pull origin main
+
+# إنشاء فرع جديد
+git checkout -b "$branch_name"
+
+# إضافة وحفظ جميع التعديلات
+git add .
+git commit -m "$desc"
+
+# رفع الفرع الجديد على GitHub وربطه
+git push -u origin "$branch_name"
+
+echo "✅ تم إنشاء الفرع '$branch_name' ورفعه بنجاح."
+
+
+
+chmod +x push_new_branch.sh
+
+
+./push_new_branch.sh
