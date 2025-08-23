@@ -2,8 +2,25 @@ from django.urls import path, include
 from . import views
 from .api_urls import urlpatterns as api_urlpatterns  # استيراد مسارات الـ API
 from .views import ProgressReportAPI  # موجود في api_progress
+from django.urls import path
+
+
+from .register import *
+from django.urls import re_path
+
 
 urlpatterns = [
+    re_path('signup', signup),
+    re_path('login',login),
+    re_path('test_token',test_token),
+]
+
+
+
+urlpatterns +=[
+     
+     
+   
     # HTML Views
     path('', views.home, name='home'),
     path('tests/', views.test_list, name='test_list'),
