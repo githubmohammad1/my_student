@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Python bytecode and caches
 __pycache__/
 *.py[cod]
@@ -30,3 +31,53 @@ dist/
 
 # VS Code workspace
 *.code-workspace
+=======
+# ملفات نظام التشغيل
+.DS_Store
+Thumbs.db
+
+# بيئة Python الافتراضية
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# ملفات Python المؤقتة
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ملفات قاعدة البيانات المحلية
+db.sqlite3
+db.sqlite3-journal
+
+# ملفات التهيئة السرية
+*.env
+*.ini
+*.cfg
+*.secret
+*.json
+
+# ملفات الترجمة المجمعة
+*.mo
+
+# ملفات static/media المرفوعة محليًا
+/media/
+staticfiles/
+static/
+
+# ملفات الاختبار والتقارير
+.coverage
+htmlcov/
+.tox/
+pytest_cache/
+
+# إعدادات IDE
+.idea/
+.vscode/
+*.iml
+
+# Logs
+*.log
+>>>>>>> new_version
